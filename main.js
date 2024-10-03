@@ -1,6 +1,10 @@
 var money = 0;
 var scavs = 0;
 
+function updateTitle() {
+    document.title = "$" + round(money);
+}
+
 function moneyClick(number){
     money = money + number;
     document.getElementById("money").innerHTML = money;
@@ -48,4 +52,5 @@ function remove(){
 window.setInterval(function(){
     document.getElementById('money').innerHTML = round(money);
     moneyClick(scavs);
+    updateTitle()
 }, 1000);
