@@ -53,5 +53,5 @@ window.setInterval(function(){
     document.getElementById('money').innerHTML = round(money);
     moneyClick(scavs);
     updateTitle();
-    save()
+    save();
 }, 1000);
