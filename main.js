@@ -24,22 +24,25 @@ function round(input){
 }
 
 function save(){
-    localStorage.setItem("save",JSON.stringify(save));
+    var saveData = {
+        money: money,
+        scavs: scavs
+    };
+    localStorage.setItem("save", JSON.stringify(saveData));
 }
 
 function load(){
     var savegame = JSON.parse(localStorage.getItem("save"));
-    if (typeof savegame.money !== "undefined") money = savegame.money;
-    if (typeof savegame.scavs !== "undefined") scavs = savegame.scavs;
+    if (savegame) {
+        if (typeof savegame.money !== "undefined") money = savegame.money;
+        if (typeof savegame.scavs !== "undefined") scavs = savegame.scavs;
+        document.getElementById('money').innerHTML = round(money);
+        document.getElementById('scavs').innerHTML = scavs;
+    }
 }
 
 function remove(){
     localStorage.removeItem("save")
-}
-
-var save = {
-    money: money,
-    scavs: scavs
 }
 
 window.setInterval(function(){
