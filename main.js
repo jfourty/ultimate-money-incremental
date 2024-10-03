@@ -52,5 +52,6 @@ function remove(){
 window.setInterval(function(){
     document.getElementById('money').innerHTML = round(money);
     moneyClick(scavs);
-    updateTitle()
+    updateTitle();
+    save()
 }, 1000);
