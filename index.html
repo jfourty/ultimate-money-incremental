@@ -6,11 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$0</title>
     <button type="button" onClick="save()" class="sv">Save</button>
-    <button type="button" onClick="load()" class="ld">Load</button>
+    <button type="button" onClick="loadFromInput()" class="ld">Load</button>
+    <input type="text" id="base64Input" placeholder="Enter Base64 string" />
     <button type="button" onClick="remove()" class="rm">Delete</button>
 </head>
 <body>
     <h1>$<span id="money">0</span></h1>
+    <div id="saveModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 20px; z-index: 1000;">
+        <h2>Your Saved Data</h2>
+        <input type="text" id="savedDataInput" readonly />
+        <button onclick="closeModal()">Close</button>
+        <button onclick="copyToClipboard()">Copy</button>
+    </div>
     <div>
         <button id="toggleProgress" onclick="toggleProgress()" class="bm">Start Finding Money</button>
         <progress id="moneyProgress" value="0" max="100" style="display: none;"></progress>

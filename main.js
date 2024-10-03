@@ -25,21 +25,49 @@ const updateTitle = () => {
 };
 
 const save = () => {
-    localStorage.setItem("save", JSON.stringify({ 
+    const saveData = JSON.stringify({ 
         money, 
         upgradeLevel, 
         secondBarUnlocked, 
         secondBarUpgradeLevel, 
         thirdBarUnlocked, 
         thirdBarUpgradeLevel 
-    }));
+    });
+    const encodedData = btoa(saveData); // Encode to Base64
+    localStorage.setItem("save", encodedData); // Save the Base64 string
+
+    // Show the Base64 string in the modal
+    document.getElementById("savedDataInput").value = encodedData;
+    document.getElementById("saveModal").style.display = "block"; // Show the modal
 };
 
-const load = () => {
-    const savegame = JSON.parse(localStorage.getItem("save"));
-    if (savegame) {
-        Object.assign(this, savegame);
-        updateUI();
+const loadFromInput = () => {
+    const base64Input = document.getElementById("base64Input").value.trim();
+    if (!base64Input) {
+        alert("Please enter a valid Base64 string.");
+        return;
+    }
+
+    try {
+        const saveData = atob(base64Input); // Decode from Base64
+        const parsedData = JSON.parse(saveData); // Parse the JSON string
+
+        // Assign loaded values to the variables
+        money = parsedData.money || 0;
+        upgradeLevel = parsedData.upgradeLevel || 0;
+        secondBarUnlocked = parsedData.secondBarUnlocked || false;
+        secondBarUpgradeLevel = parsedData.secondBarUpgradeLevel || 0;
+        thirdBarUnlocked = parsedData.thirdBarUnlocked || false;
+        thirdBarUpgradeLevel = parsedData.thirdBarUpgradeLevel || 0;
+
+        // Update costs based on loaded levels
+        updateUpgradeCost(); // Update the main upgrade cost
+        updateSecondBarUpgradeCost(); // Update the second bar upgrade cost
+        updateThirdBarUpgradeCost(); // Update the third bar upgrade cost
+
+        updateUI(); // Update the UI with the loaded data
+    } catch (error) {
+        alert("Failed to load data. Please check the Base64 string.");
     }
 };
 
@@ -209,14 +237,30 @@ const updateUI = () => {
 
     document.getElementById('secondBarUpgradeLevel').innerHTML = secondBarUpgradeLevel;
     updateSecondBarUpgradeCost();
-    document.getElementById('secondBarInterval').innerText = ` ${calculateIntervalDuration(secondBarUpgradeLevel, 150)}ms`;
-
+    
     document.getElementById('thirdBarUpgradeLevel').innerHTML = thirdBarUpgradeLevel;
     updateThirdBarUpgradeCost();
-    document.getElementById('thirdBarInterval').innerText = ` ${calculateIntervalDuration(thirdBarUpgradeLevel, 200)}ms`;
+
+    // Show/hide the second and third bars based on their unlocked status
+    document.getElementById('secondBarContainer').style.display = secondBarUnlocked ? "block" : "none";
+    document.getElementById('thirdBarContainer').style.display = thirdBarUnlocked ? "block" : "none";
 };
 
-setInterval(() => {
-    document.getElementById('money').innerHTML = round(money);
-    updateTitle();
-}, 1000);
+const closeModal = () => {
+    document.getElementById("saveModal").style.display = "none"; // Hide the modal
+};
+
+const copyToClipboard = () => {
+    const input = document.getElementById("savedDataInput");
+    input.select();
+    document.execCommand("copy"); // Copy the input value to clipboard
+    alert("Copied to clipboard!"); // Optional: Alert user that it's copied
+};
+
+window.onload = () => {
+    const savedData = localStorage.getItem("save");
+    if (savedData) {
+        // Optionally, you can set the input value directly
+        document.getElementById("base64Input").value = savedData; // Set the input field if there is saved data
+    }
+};
