@@ -18,6 +18,31 @@ function buyScav(){
     document.getElementById('scavsCost').innerHTML = nextCost;
 };
 
+function round(input){
+    var output = Math.round(input * 1000000)/1000000;
+	return output;
+}
+
+function save(){
+    localStorage.setItem("save",JSON.stringify(save));
+}
+
+function load(){
+    var savegame = JSON.parse(localStorage.getItem("save"));
+    if (typeof savegame.money !== "undefined") money = savegame.money;
+    if (typeof savegame.scavs !== "undefined") scavs = savegame.scavs;
+}
+
+function remove(){
+    localStorage.removeItem("save")
+}
+
+var save = {
+    money: money,
+    scavs: scavs
+}
+
 window.setInterval(function(){
+    document.getElementById('money').innerHTML = round(money);
     moneyClick(scavs);
 }, 1000);

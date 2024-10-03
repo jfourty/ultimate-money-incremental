@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>a</title>
+    <button type="button" onClick="save()" class="sv">save</button>
+    <button type="button" onClick="load()" class="ld">load</button>
+    <button type="button" onClick="remove()" class="rm">delete</button>
 </head>
 <body>
     <h1>money: <span id="money">0</span></h1>
     <p>scavengers: <span id="scavs">0</span><br /></p>
     <p>cost: <span id="scavsCost">100</span></p>
-    <button type="button" onClick="moneyClick(1)"><span id="bm">find money</span></button>
-    <button type="button" onClick="buyScav()"><span id="bs1">hire money scavengers</span></button>
+    <button type="button" onClick="moneyClick(1)" class="bm">find money</button><br />
+    <button type="button" onClick="buyScav()" class="bs1">hire money scavengers</button>
     <script type="text/javascript" src="main.js"></script>
 </body>
 </html>

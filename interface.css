@@ -1,2 +1,8 @@
-.bm{order: 1;}
-.bs1{order: 2;}
+.sv{order: 1;}
+.ld{order: 2;}
+.rm{
+    order: 3;
+    margin-right: 100%;
+}
+.bm{order: 4;}
+.bs1{order: 5;}
