@@ -13,7 +13,10 @@
     <h1>money: <span id="money">0</span></h1>
     <p>scavengers: <span id="scavs">0</span><br /></p>
     <p>cost: <span id="scavsCost">100</span></p>
-    <button type="button" onClick="moneyClick(1)" class="bm">find money</button><br />
+    <div>
+        <button id="toggleProgress" onclick="toggleProgress()" class="bm">start finding money</button>
+        <progress id="moneyProgress" value="0" max="100" style="display: none;"></progress>
+    </div>
     <button type="button" onClick="buyScav()" class="bs1">hire money scavengers</button>
     <script type="text/javascript" src="main.js"></script>
 </body>
