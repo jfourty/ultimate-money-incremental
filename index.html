@@ -5,19 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$0</title>
-    <button type="button" onClick="save()" class="sv">save</button>
-    <button type="button" onClick="load()" class="ld">load</button>
-    <button type="button" onClick="remove()" class="rm">delete</button>
+    <button type="button" onClick="save()" class="sv">Save</button>
+    <button type="button" onClick="load()" class="ld">Load</button>
+    <button type="button" onClick="remove()" class="rm">Delete</button>
 </head>
 <body>
-    <h1>money: <span id="money">0</span></h1>
-    <p>scavengers: <span id="scavs">0</span><br /></p>
-    <p>cost: <span id="scavsCost">100</span></p>
+    <h1>$<span id="money">0</span></h1>
     <div>
-        <button id="toggleProgress" onclick="toggleProgress()" class="bm">start finding money</button>
+        <button id="toggleProgress" onclick="toggleProgress()" class="bm">Start Finding Money</button>
         <progress id="moneyProgress" value="0" max="100" style="display: none;"></progress>
+        <span>Level: <span id="upgradeLevel">0</span></span>
+        <span>$<span id="upgradeCost">10</span></span>
+        <button id="upgradeButton" onclick="upgrade()" class="bm">Upgrade</button>
+        <span id="progressInterval"> 100ms</span>
     </div>
-    <button type="button" onClick="buyScav()" class="bs1">hire money scavengers</button>
+
+    <div id="secondBarContainer" style="display: none;">
+        <button id="toggleSecondBar" onclick="toggleSecondBarProgress()" class="bm">Start Ice Cream Truck</button>
+        <progress id="secondBarProgress" value="0" max="100" style="display: none;"></progress>
+        <span>Level: <span id="secondBarUpgradeLevel">0</span></span>
+        <span>$<span id="secondBarCost">25</span></span>
+        <button onclick="upgradeSecondBar()" class="bm">Upgrade</button>
+        <span id="secondBarInterval"> 150ms</span>
+    </div>
+
+    <div id="thirdBarContainer" style="display: none;">
+        <button id="toggleThirdBar" onclick="toggleThirdBarProgress()">Start Pizza Delivery</button>
+        <progress id="thirdBarProgress" value="0" max="100" style="display: none;"></progress>
+        <span>Level: <span id="thirdBarUpgradeLevel">0</span></span>
+        <span>$<span id="thirdBarCost">300</span></span>
+        <button onclick="upgradeThirdBar()">Upgrade</button>
+        <span id="thirdBarInterval"> 200ms</span>
+    </div>
+
     <script type="text/javascript" src="main.js"></script>
 </body>
 </html>
