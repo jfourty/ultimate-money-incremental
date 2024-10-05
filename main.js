@@ -122,8 +122,7 @@ const startProgress = () => {
             progressValue++;
             document.getElementById("moneyProgress").value = progressValue;
         } else {
-            // Exponential growth formula for money
-            money += round(10 * Math.pow(1.15, upgradeLevel)); // 10 is the base amount
+            money += round(10 * Math.pow(1.15, upgradeLevel));
             document.getElementById("money").innerHTML = round(money);
             progressValue = 0;
         }
@@ -170,12 +169,17 @@ const toggleSecondBarProgress = () => {
 
     const secondBarButton = document.getElementById("toggleSecondBar");
     const secondBarProgressBar = document.getElementById("secondBarProgress");
-    
+
     secondBarButton.classList.toggle("active");
     secondBarProgressBar.style.display = secondBarButton.classList.contains("active") ? "inline" : "none";
     secondBarButton.innerText = secondBarButton.classList.contains("active") ? "Stop Ice Cream Truck" : "Start Ice Cream Truck";
-    
-    secondBarButton.classList.contains("active") ? startSecondBarProgress() : stopSecondBarProgress();
+
+    // Start or stop the second bar progress
+    if (secondBarButton.classList.contains("active")) {
+        startSecondBarProgress();
+    } else {
+        stopSecondBarProgress();
+    }
 };
 
 const startSecondBarProgress = () => {
@@ -185,8 +189,7 @@ const startSecondBarProgress = () => {
             secondBarProgressValue++;
             document.getElementById("secondBarProgress").value = secondBarProgressValue;
         } else {
-            // Exponential growth formula for the second bar
-            money += round(20 * Math.pow(1.15, secondBarUpgradeLevel)); // 20 is the base amount
+            money += round(20 * Math.pow(1.15, secondBarUpgradeLevel));
             document.getElementById("money").innerHTML = round(money);
             secondBarProgressValue = 0;
         }
@@ -214,12 +217,17 @@ const toggleThirdBarProgress = () => {
 
     const thirdBarButton = document.getElementById("toggleThirdBar");
     const thirdBarProgressBar = document.getElementById("thirdBarProgress");
-    
+
     thirdBarButton.classList.toggle("active");
     thirdBarProgressBar.style.display = thirdBarButton.classList.contains("active") ? "inline" : "none";
     thirdBarButton.innerText = thirdBarButton.classList.contains("active") ? "Stop Pizza Delivery" : "Start Pizza Delivery";
-    
-    thirdBarButton.classList.contains("active") ? startThirdBarProgress() : stopThirdBarProgress();
+
+    // Start or stop the third bar progress
+    if (thirdBarButton.classList.contains("active")) {
+        startThirdBarProgress();
+    } else {
+        stopThirdBarProgress();
+    }
 };
 
 const startThirdBarProgress = () => {
@@ -229,8 +237,7 @@ const startThirdBarProgress = () => {
             thirdBarProgressValue++;
             document.getElementById("thirdBarProgress").value = thirdBarProgressValue;
         } else {
-            // Exponential growth formula for the third bar
-            money += round(70 * Math.pow(1.15, thirdBarUpgradeLevel)); // 70 is the base amount
+            money += round(70 * Math.pow(1.15, thirdBarUpgradeLevel));
             document.getElementById("money").innerHTML = round(money);
             thirdBarProgressValue = 0;
         }
@@ -318,7 +325,7 @@ const copyToClipboard = () => {
     const input = document.getElementById("savedDataInput");
     input.select();
     document.execCommand("copy"); // Copy the input value to clipboard
-    alert("Copied to clipboard!"); // Optional: Alert user that it's copied
+    showAlert("Copied to clipboard!"); // Optional: Alert user that it's copied
 };
 
 // Initial setup
