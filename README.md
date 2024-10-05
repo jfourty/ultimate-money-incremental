@@ -6,7 +6,7 @@ if you want to use this as a template you're free to do so just put me in the de
 
 ## todo:  
 -a lot more passive buyables  
--add upgrades  
+-add other types of upgrades  
 -prestiges n stuff?  
 -something fun like city building maybe as like a gimmick  
 -probably other stuff  
