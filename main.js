@@ -24,6 +24,27 @@ const updateTitle = () => {
     document.title = `$${round(money)}`;
 };
 
+const showAlert = (message) => {
+    const alertDiv = document.getElementById("alertMessage");
+    alertDiv.innerText = message;
+    alertDiv.style.display = "block";
+
+    // Position the alert near the cursor
+    document.onmousemove = (e) => {
+        alertDiv.style.left = e.pageX + 10 + 'px'; // Offset slightly to the right of the cursor
+        alertDiv.style.top = e.pageY + 10 + 'px'; // Offset slightly below the cursor
+    };
+
+    // Fade out the alert after 3 seconds
+    setTimeout(() => {
+        alertDiv.style.opacity = '0'; // Start fading
+        setTimeout(() => {
+            alertDiv.style.display = "none"; // Hide it after fading
+            alertDiv.style.opacity = '1'; // Reset opacity for next use
+        }, 500); // Wait for the fading transition to complete
+    }, 3000); // Show for 3 seconds
+};
+
 const save = () => {
     const saveData = JSON.stringify({ 
         money, 
@@ -44,7 +65,7 @@ const save = () => {
 const loadFromInput = () => {
     const base64Input = document.getElementById("base64Input").value.trim();
     if (!base64Input) {
-        alert("Please enter a valid Base64 string.");
+        showAlert("Please enter a valid Base64 string.");
         return;
     }
 
@@ -61,13 +82,22 @@ const loadFromInput = () => {
         thirdBarUpgradeLevel = parsedData.thirdBarUpgradeLevel || 0;
 
         // Update costs based on loaded levels
-        updateUpgradeCost(); // Update the main upgrade cost
-        updateSecondBarUpgradeCost(); // Update the second bar upgrade cost
-        updateThirdBarUpgradeCost(); // Update the third bar upgrade cost
+        updateUpgradeCost();
+        updateSecondBarUpgradeCost();
+        updateThirdBarUpgradeCost();
 
-        updateUI(); // Update the UI with the loaded data
+        // Show second and third bars if they are unlocked
+        if (secondBarUnlocked) {
+            document.getElementById('secondBarContainer').style.display = "block";
+        }
+        if (thirdBarUnlocked) {
+            document.getElementById('thirdBarContainer').style.display = "block";
+        }
+
+        // Update the UI to reflect the loaded state
+        updateUI();
     } catch (error) {
-        alert("Failed to load data. Please check the Base64 string.");
+        showAlert("Failed to load data. Please check the Base64 string.");
     }
 };
 
@@ -92,7 +122,8 @@ const startProgress = () => {
             progressValue++;
             document.getElementById("moneyProgress").value = progressValue;
         } else {
-            money += 10 + (upgradeLevel * 5);
+            // Exponential growth formula for money
+            money += round(10 * Math.pow(1.15, upgradeLevel)); // 10 is the base amount
             document.getElementById("money").innerHTML = round(money);
             progressValue = 0;
         }
@@ -108,33 +139,34 @@ const upgrade = () => {
         upgradeLevel++;
         updateUpgradeCost();
         updateUI();
-        
+        restartProgressBars();
+
         if (upgradeLevel === 1) {
             secondBarUnlocked = true;
             document.getElementById('secondBarContainer').style.display = "block";
         }
     } else {
-        alert("Insufficient funds!");
+        showAlert("Insufficient funds!");
     }
 };
 
 const updateUpgradeCost = () => {
-    upgradeCost = Math.floor(10 * Math.pow(1.2, upgradeLevel));
+    upgradeCost = Math.floor(10 * Math.pow(1.5, upgradeLevel)); // Exponential cost growth
 };
 
 const updateSecondBarUpgradeCost = () => {
-    const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.2, secondBarUpgradeLevel));
+    const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.5, secondBarUpgradeLevel)); // Exponential cost growth
     document.getElementById('secondBarCost').innerHTML = cost;
 };
 
 const updateThirdBarUpgradeCost = () => {
-    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.2, thirdBarUpgradeLevel));
+    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel)); // Exponential cost growth
     document.getElementById('thirdBarCost').innerHTML = cost;
 };
 
 const toggleSecondBarProgress = () => {
-    if (!secondBarUnlocked) return alert("Unlock the second bar first!");
-    if (secondBarUpgradeLevel < 1) return alert("Upgrade the second bar at least once!");
+    if (!secondBarUnlocked) return showAlert("Unlock the second bar first!");
+    if (secondBarUpgradeLevel < 1) return showAlert("Upgrade the second bar at least once!");
 
     const secondBarButton = document.getElementById("toggleSecondBar");
     const secondBarProgressBar = document.getElementById("secondBarProgress");
@@ -153,7 +185,8 @@ const startSecondBarProgress = () => {
             secondBarProgressValue++;
             document.getElementById("secondBarProgress").value = secondBarProgressValue;
         } else {
-            money += 20 + (secondBarUpgradeLevel * 5);
+            // Exponential growth formula for the second bar
+            money += round(20 * Math.pow(1.15, secondBarUpgradeLevel)); // 20 is the base amount
             document.getElementById("money").innerHTML = round(money);
             secondBarProgressValue = 0;
         }
@@ -164,20 +197,20 @@ const startSecondBarProgress = () => {
 const stopSecondBarProgress = () => clearInterval(secondBarInterval);
 
 const upgradeSecondBar = () => {
-    const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.2, secondBarUpgradeLevel));
+    const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.5, secondBarUpgradeLevel));
     if (secondBarUnlocked && money >= cost) {
         money -= cost;
         secondBarUpgradeLevel++;
-        updateUI();
-        checkThirdBarUnlock();
+        updateUI();  // Update UI after upgrade
+        checkThirdBarUnlock();  // Check and unlock third bar if necessary
     } else {
-        alert("Insufficient funds!");
+        showAlert("Insufficient funds!");
     }
 };
 
 const toggleThirdBarProgress = () => {
-    if (!thirdBarUnlocked) return alert("Unlock the third bar first!");
-    if (thirdBarUpgradeLevel < 1) return alert("Upgrade the third bar at least once!");
+    if (!thirdBarUnlocked) return showAlert("Unlock the third bar first!");
+    if (thirdBarUpgradeLevel < 1) return showAlert("Upgrade the third bar at least once!");
 
     const thirdBarButton = document.getElementById("toggleThirdBar");
     const thirdBarProgressBar = document.getElementById("thirdBarProgress");
@@ -196,7 +229,8 @@ const startThirdBarProgress = () => {
             thirdBarProgressValue++;
             document.getElementById("thirdBarProgress").value = thirdBarProgressValue;
         } else {
-            money += 70 + (thirdBarUpgradeLevel * 5);
+            // Exponential growth formula for the third bar
+            money += round(70 * Math.pow(1.15, thirdBarUpgradeLevel)); // 70 is the base amount
             document.getElementById("money").innerHTML = round(money);
             thirdBarProgressValue = 0;
         }
@@ -207,43 +241,73 @@ const startThirdBarProgress = () => {
 const stopThirdBarProgress = () => clearInterval(thirdBarInterval);
 
 const upgradeThirdBar = () => {
-    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.2, thirdBarUpgradeLevel));
+    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel)); // Exponential cost growth
     if (thirdBarUnlocked && money >= cost) {
         money -= cost;
         thirdBarUpgradeLevel++;
         updateUI();
+        restartProgressBars();
     } else {
-        alert("Insufficient funds!");
+        showAlert("Insufficient funds!");
     }
 };
 
 const calculateIntervalDuration = (level, baseDuration) => {
-    const speedMultiplier = Math.pow(1.1, Math.floor(level / 10)); // 1.1x speed every 10 levels
-    return Math.floor(baseDuration / speedMultiplier);
+    const speedMultiplier = Math.pow(1.1, Math.floor(level / 10)); // Speed up every 10 levels
+    return Math.floor(baseDuration / speedMultiplier); 
 };
 
 const checkThirdBarUnlock = () => {
-    if (secondBarUpgradeLevel > 0) {
+    if (secondBarUpgradeLevel >= 5 && !thirdBarUnlocked) {
         thirdBarUnlocked = true;
-        document.getElementById('thirdBarContainer').style.display = "block";
+        document.getElementById('thirdBarContainer').style.display = "block"; // Show third bar
+    }
+};
+
+const restartProgressBars = () => {
+    // Restart main bar progress
+    stopProgress();
+    if (isFindingMoney) startProgress();
+
+    // Restart second bar progress if active
+    if (document.getElementById("toggleSecondBar").classList.contains("active")) {
+        stopSecondBarProgress();
+        startSecondBarProgress();
+    }
+
+    // Restart third bar progress if active
+    if (document.getElementById("toggleThirdBar").classList.contains("active")) {
+        stopThirdBarProgress();
+        startThirdBarProgress();
     }
 };
 
 const updateUI = () => {
-    document.getElementById('money').innerHTML = round(money);
-    document.getElementById('upgradeLevel').innerHTML = upgradeLevel;
-    document.getElementById('upgradeCost').innerHTML = upgradeCost;
-    document.getElementById('progressInterval').innerText = ` ${calculateIntervalDuration(upgradeLevel, 100)}ms`;
+    if (document.getElementById("money")) {
+        document.getElementById("money").innerHTML = round(money);
+    }
+    if (document.getElementById("upgradeCost")) {
+        document.getElementById("upgradeCost").innerHTML = upgradeCost;
+    }
+    if (document.getElementById('secondBarCost')) {
+        document.getElementById('secondBarCost').innerHTML = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.5, secondBarUpgradeLevel));
+    }
+    if (document.getElementById('thirdBarCost')) {
+        document.getElementById('thirdBarCost').innerHTML = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel));
+    }
 
-    document.getElementById('secondBarUpgradeLevel').innerHTML = secondBarUpgradeLevel;
-    updateSecondBarUpgradeCost();
-    
-    document.getElementById('thirdBarUpgradeLevel').innerHTML = thirdBarUpgradeLevel;
-    updateThirdBarUpgradeCost();
+    // Ensure upgrade levels display if elements are present in HTML
+    if (document.getElementById('upgradeLevelDisplay')) {
+        document.getElementById('upgradeLevelDisplay').innerHTML = upgradeLevel;
+    }
+    if (document.getElementById('secondBarUpgradeLevelDisplay')) {
+        document.getElementById('secondBarUpgradeLevelDisplay').innerHTML = secondBarUpgradeLevel;
+    }
+    if (document.getElementById('thirdBarUpgradeLevelDisplay')) {
+        document.getElementById('thirdBarUpgradeLevelDisplay').innerHTML = thirdBarUpgradeLevel;
+    }
 
-    // Show/hide the second and third bars based on their unlocked status
-    document.getElementById('secondBarContainer').style.display = secondBarUnlocked ? "block" : "none";
-    document.getElementById('thirdBarContainer').style.display = thirdBarUnlocked ? "block" : "none";
+    updateTitle();
 };
 
 const closeModal = () => {
@@ -256,6 +320,12 @@ const copyToClipboard = () => {
     document.execCommand("copy"); // Copy the input value to clipboard
     alert("Copied to clipboard!"); // Optional: Alert user that it's copied
 };
+
+// Initial setup
+updateUpgradeCost();
+updateSecondBarUpgradeCost();
+updateThirdBarUpgradeCost();
+document.getElementById("money").innerHTML = money;
 
 window.onload = () => {
     const savedData = localStorage.getItem("save");
