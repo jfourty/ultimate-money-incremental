@@ -11,6 +11,7 @@
     <button type="button" onClick="remove()" class="rm">Delete</button>
 </head>
 <body>
+     <div id="alertMessage" style="display: none; position: absolute; color: red; transition: opacity 0.5s; opacity: 1; z-index: 1001;"></div>
     <h1>$<span id="money">0</span></h1>
     <div id="saveModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 20px; z-index: 1000;">
         <h2>Your Saved Data</h2>
@@ -21,7 +22,7 @@
     <div>
         <button id="toggleProgress" onclick="toggleProgress()" class="bm">Start Finding Money</button>
         <progress id="moneyProgress" value="0" max="100" style="display: none;"></progress>
-        <span>Level: <span id="upgradeLevel">0</span></span>
+        <span>Level: <span id="upgradeLevelDisplay">0</span></span>
         <span>$<span id="upgradeCost">10</span></span>
         <button id="upgradeButton" onclick="upgrade()" class="bm">Upgrade</button>
         <span id="progressInterval"> 100ms</span>
@@ -30,7 +31,7 @@
     <div id="secondBarContainer" style="display: none;">
         <button id="toggleSecondBar" onclick="toggleSecondBarProgress()" class="bm">Start Ice Cream Truck</button>
         <progress id="secondBarProgress" value="0" max="100" style="display: none;"></progress>
-        <span>Level: <span id="secondBarUpgradeLevel">0</span></span>
+        <span>Level: <span id="secondBarUpgradeLevelDisplay">0</span></span>
         <span>$<span id="secondBarCost">25</span></span>
         <button onclick="upgradeSecondBar()" class="bm">Upgrade</button>
         <span id="secondBarInterval"> 150ms</span>
@@ -39,7 +40,7 @@
     <div id="thirdBarContainer" style="display: none;">
         <button id="toggleThirdBar" onclick="toggleThirdBarProgress()">Start Pizza Delivery</button>
         <progress id="thirdBarProgress" value="0" max="100" style="display: none;"></progress>
-        <span>Level: <span id="thirdBarUpgradeLevel">0</span></span>
+        <span>Level: <span id="thirdBarUpgradeLevelDisplay">0</span></span>
         <span>$<span id="thirdBarCost">300</span></span>
         <button onclick="upgradeThirdBar()">Upgrade</button>
         <span id="thirdBarInterval"> 200ms</span>
