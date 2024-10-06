@@ -18,7 +18,9 @@ let thirdBarUnlocked = false,
 const baseSecondBarUpgradeCost = 25; 
 const baseThirdBarUpgradeCost = 300;
 
-const round = input => Math.round(input * 1e6) / 1e6;
+let logEntries = [];
+
+const round = input => Math.round(input * 100) / 100;
 
 const updateTitle = () => {
     document.title = `$${round(money)}`;
@@ -28,21 +30,18 @@ const showAlert = (message) => {
     const alertDiv = document.getElementById("alertMessage");
     alertDiv.innerText = message;
     alertDiv.style.display = "block";
-
-    // Position the alert near the cursor
     document.onmousemove = (e) => {
-        alertDiv.style.left = e.pageX + 10 + 'px'; // Offset slightly to the right of the cursor
-        alertDiv.style.top = e.pageY + 10 + 'px'; // Offset slightly below the cursor
+        alertDiv.style.left = e.pageX + 10 + 'px';
+        alertDiv.style.top = e.pageY + 10 + 'px';
     };
 
-    // Fade out the alert after 3 seconds
     setTimeout(() => {
-        alertDiv.style.opacity = '0'; // Start fading
+        alertDiv.style.opacity = '0';
         setTimeout(() => {
-            alertDiv.style.display = "none"; // Hide it after fading
-            alertDiv.style.opacity = '1'; // Reset opacity for next use
-        }, 500); // Wait for the fading transition to complete
-    }, 3000); // Show for 3 seconds
+            alertDiv.style.display = "none";
+            alertDiv.style.opacity = '1';
+        }, 500);
+    }, 3000);
 };
 
 const save = () => {
@@ -54,12 +53,11 @@ const save = () => {
         thirdBarUnlocked, 
         thirdBarUpgradeLevel 
     });
-    const encodedData = btoa(saveData); // Encode to Base64
-    localStorage.setItem("save", encodedData); // Save the Base64 string
+    const encodedData = btoa(saveData);
+    localStorage.setItem("save", encodedData);
 
-    // Show the Base64 string in the modal
     document.getElementById("savedDataInput").value = encodedData;
-    document.getElementById("saveModal").style.display = "block"; // Show the modal
+    document.getElementById("saveModal").style.display = "block";
 };
 
 const loadFromInput = () => {
@@ -70,10 +68,9 @@ const loadFromInput = () => {
     }
 
     try {
-        const saveData = atob(base64Input); // Decode from Base64
-        const parsedData = JSON.parse(saveData); // Parse the JSON string
+        const saveData = atob(base64Input);
+        const parsedData = JSON.parse(saveData);
 
-        // Assign loaded values to the variables
         money = parsedData.money || 0;
         upgradeLevel = parsedData.upgradeLevel || 0;
         secondBarUnlocked = parsedData.secondBarUnlocked || false;
@@ -81,12 +78,10 @@ const loadFromInput = () => {
         thirdBarUnlocked = parsedData.thirdBarUnlocked || false;
         thirdBarUpgradeLevel = parsedData.thirdBarUpgradeLevel || 0;
 
-        // Update costs based on loaded levels
         updateUpgradeCost();
         updateSecondBarUpgradeCost();
         updateThirdBarUpgradeCost();
 
-        // Show second and third bars if they are unlocked
         if (secondBarUnlocked) {
             document.getElementById('secondBarContainer').style.display = "block";
         }
@@ -94,7 +89,6 @@ const loadFromInput = () => {
             document.getElementById('thirdBarContainer').style.display = "block";
         }
 
-        // Update the UI to reflect the loaded state
         updateUI();
     } catch (error) {
         showAlert("Failed to load data. Please check the Base64 string.");
@@ -102,6 +96,18 @@ const loadFromInput = () => {
 };
 
 const remove = () => localStorage.removeItem("save");
+
+const logTransaction = (amount, type) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = `${timestamp} - ${type}: $${round(amount)}`;
+    logEntries.push(entry);
+    updateLogDisplay();
+};
+
+const updateLogDisplay = () => {
+    const logContainer = document.getElementById('logContainer');
+    logContainer.innerHTML = logEntries.map(entry => `<div>${entry}</div>`).join('');
+};
 
 const toggleProgress = () => {
     isFindingMoney = !isFindingMoney;
@@ -122,8 +128,10 @@ const startProgress = () => {
             progressValue++;
             document.getElementById("moneyProgress").value = progressValue;
         } else {
-            money += round(10 * Math.pow(1.15, upgradeLevel));
+            const income = round(10 * Math.pow(1.3, upgradeLevel));
+            money += income;
             document.getElementById("money").innerHTML = round(money);
+            logTransaction(income, 'Income');
             progressValue = 0;
         }
     }, intervalDuration);
@@ -135,6 +143,7 @@ const stopProgress = () => clearInterval(progressInterval);
 const upgrade = () => {
     if (money >= upgradeCost) {
         money -= upgradeCost;
+        logTransaction(upgradeCost, 'Expense');
         upgradeLevel++;
         updateUpgradeCost();
         updateUI();
@@ -150,16 +159,16 @@ const upgrade = () => {
 };
 
 const updateUpgradeCost = () => {
-    upgradeCost = Math.floor(10 * Math.pow(1.5, upgradeLevel)); // Exponential cost growth
+    upgradeCost = Math.floor(10 * Math.pow(1.5, upgradeLevel));
 };
 
 const updateSecondBarUpgradeCost = () => {
-    const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.5, secondBarUpgradeLevel)); // Exponential cost growth
+    const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.5, secondBarUpgradeLevel));
     document.getElementById('secondBarCost').innerHTML = cost;
 };
 
 const updateThirdBarUpgradeCost = () => {
-    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel)); // Exponential cost growth
+    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel));
     document.getElementById('thirdBarCost').innerHTML = cost;
 };
 
@@ -174,7 +183,6 @@ const toggleSecondBarProgress = () => {
     secondBarProgressBar.style.display = secondBarButton.classList.contains("active") ? "inline" : "none";
     secondBarButton.innerText = secondBarButton.classList.contains("active") ? "Stop Ice Cream Truck" : "Start Ice Cream Truck";
 
-    // Start or stop the second bar progress
     if (secondBarButton.classList.contains("active")) {
         startSecondBarProgress();
     } else {
@@ -189,8 +197,10 @@ const startSecondBarProgress = () => {
             secondBarProgressValue++;
             document.getElementById("secondBarProgress").value = secondBarProgressValue;
         } else {
-            money += round(20 * Math.pow(1.15, secondBarUpgradeLevel));
+            const income = round(20 * Math.pow(1.3, upgradeLevel));
+            money += income;
             document.getElementById("money").innerHTML = round(money);
+            logTransaction(income, 'Income');
             secondBarProgressValue = 0;
         }
     }, intervalDuration);
@@ -203,9 +213,11 @@ const upgradeSecondBar = () => {
     const cost = Math.floor(baseSecondBarUpgradeCost * Math.pow(1.5, secondBarUpgradeLevel));
     if (secondBarUnlocked && money >= cost) {
         money -= cost;
+        logTransaction(upgradeCost, 'Expense');
         secondBarUpgradeLevel++;
-        updateUI();  // Update UI after upgrade
-        checkThirdBarUnlock();  // Check and unlock third bar if necessary
+        updateUI();
+        checkThirdBarUnlock();
+        restartProgressBars();
     } else {
         showAlert("Insufficient funds!");
     }
@@ -222,7 +234,6 @@ const toggleThirdBarProgress = () => {
     thirdBarProgressBar.style.display = thirdBarButton.classList.contains("active") ? "inline" : "none";
     thirdBarButton.innerText = thirdBarButton.classList.contains("active") ? "Stop Pizza Delivery" : "Start Pizza Delivery";
 
-    // Start or stop the third bar progress
     if (thirdBarButton.classList.contains("active")) {
         startThirdBarProgress();
     } else {
@@ -237,8 +248,10 @@ const startThirdBarProgress = () => {
             thirdBarProgressValue++;
             document.getElementById("thirdBarProgress").value = thirdBarProgressValue;
         } else {
-            money += round(70 * Math.pow(1.15, thirdBarUpgradeLevel));
+            const income = round(75 * Math.pow(1.3, upgradeLevel));
+            money += income;
             document.getElementById("money").innerHTML = round(money);
+            logTransaction(income, 'Income');
             thirdBarProgressValue = 0;
         }
     }, intervalDuration);
@@ -248,9 +261,10 @@ const startThirdBarProgress = () => {
 const stopThirdBarProgress = () => clearInterval(thirdBarInterval);
 
 const upgradeThirdBar = () => {
-    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel)); // Exponential cost growth
+    const cost = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel));
     if (thirdBarUnlocked && money >= cost) {
         money -= cost;
+        logTransaction(upgradeCost, 'Expense');
         thirdBarUpgradeLevel++;
         updateUI();
         restartProgressBars();
@@ -260,29 +274,26 @@ const upgradeThirdBar = () => {
 };
 
 const calculateIntervalDuration = (level, baseDuration) => {
-    const speedMultiplier = Math.pow(1.1, Math.floor(level / 10)); // Speed up every 10 levels
+    const speedMultiplier = Math.pow(1.1, Math.floor(level / 10));
     return Math.floor(baseDuration / speedMultiplier); 
 };
 
 const checkThirdBarUnlock = () => {
     if (secondBarUpgradeLevel >= 5 && !thirdBarUnlocked) {
         thirdBarUnlocked = true;
-        document.getElementById('thirdBarContainer').style.display = "block"; // Show third bar
+        document.getElementById('thirdBarContainer').style.display = "block";
     }
 };
 
 const restartProgressBars = () => {
-    // Restart main bar progress
     stopProgress();
     if (isFindingMoney) startProgress();
 
-    // Restart second bar progress if active
     if (document.getElementById("toggleSecondBar").classList.contains("active")) {
         stopSecondBarProgress();
         startSecondBarProgress();
     }
 
-    // Restart third bar progress if active
     if (document.getElementById("toggleThirdBar").classList.contains("active")) {
         stopThirdBarProgress();
         startThirdBarProgress();
@@ -303,7 +314,6 @@ const updateUI = () => {
         document.getElementById('thirdBarCost').innerHTML = Math.floor(baseThirdBarUpgradeCost * Math.pow(1.5, thirdBarUpgradeLevel));
     }
 
-    // Ensure upgrade levels display if elements are present in HTML
     if (document.getElementById('upgradeLevelDisplay')) {
         document.getElementById('upgradeLevelDisplay').innerHTML = upgradeLevel;
     }
@@ -318,14 +328,14 @@ const updateUI = () => {
 };
 
 const closeModal = () => {
-    document.getElementById("saveModal").style.display = "none"; // Hide the modal
+    document.getElementById("saveModal").style.display = "none";
 };
 
 const copyToClipboard = () => {
     const input = document.getElementById("savedDataInput");
     input.select();
-    document.execCommand("copy"); // Copy the input value to clipboard
-    showAlert("Copied to clipboard!"); // Optional: Alert user that it's copied
+    document.execCommand("copy");
+    showAlert("Copied to clipboard!");
 };
 
 // Initial setup
@@ -337,7 +347,6 @@ document.getElementById("money").innerHTML = money;
 window.onload = () => {
     const savedData = localStorage.getItem("save");
     if (savedData) {
-        // Optionally, you can set the input value directly
-        document.getElementById("base64Input").value = savedData; // Set the input field if there is saved data
+        document.getElementById("base64Input").value = savedData;
     }
 };
