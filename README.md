@@ -6,7 +6,7 @@ if you want to use this as a template you're free to do so just put me in the de
 
 ## todo:  
 -maybe name the things in incomes and expenses  
--a money per second or minute display?
+-a money per second or minute display?  
 -a lot more passive buyables  
 -add other types of upgrades  
 -prestiges n stuff?  
