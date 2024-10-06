@@ -248,7 +248,7 @@ const startThirdBarProgress = () => {
             thirdBarProgressValue++;
             document.getElementById("thirdBarProgress").value = thirdBarProgressValue;
         } else {
-            const income = round(75 * Math.pow(1.3, upgradeLevel));
+            const income = round(75 * Math.pow(1.3, thirdBarUpgradeLevel));
             money += income;
             document.getElementById("money").innerHTML = round(money);
             logTransaction(income, 'Income');
