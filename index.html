@@ -11,7 +11,9 @@
     <button type="button" onClick="remove()" class="rm">Delete</button>
 </head>
 <body>
-     <div id="alertMessage" style="display: none; position: absolute; color: red; transition: opacity 0.5s; opacity: 1; z-index: 1001;"></div>
+    <div id="logContainer" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 300px; height: 100%; overflow-y: auto; background: #f1f1f1; border-left: 1px solid #ccc; border-right: 1px solid #ccc; padding: 10px; text-align: center;">
+    </div>
+    <div id="alertMessage" style="display: none; position: absolute; color: red; transition: opacity 0.5s; opacity: 1; z-index: 1001;"></div>
     <h1>$<span id="money">0</span></h1>
     <div id="saveModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 20px; z-index: 1000;">
         <h2>Your Saved Data</h2>
